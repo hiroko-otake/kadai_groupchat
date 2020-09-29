@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <title>Chatアプリ</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <!-- ヘッダー部分 -->
+  <header class="header">
+    <div class="text-center">
+      <h1 class="title">グループチャット</h1>
+    </div>
+  </header>
+  <!-- アイコン部分 -->
+  <div class="icons_wrapper">
+    <ul class="icons">
+      <li class="imgs" data-img="0"><img src="imgs/otake.jpg" alt="大竹の画像" width="100" class="face_icon0"><br>
+        <p class="text-center">おおたけ</p>
+      </li>
+      <li class="imgs" data-img="1"><img src="imgs/asako.jpg" alt="麻子の画像" width="100" class="face_icon1"><br>
+        <p class="text-center">あさこ</p>
+      </li>
+      <li class="imgs" data-img="2"><img src="imgs/michiyo.jpg" alt="美千代の画像" width="100" class="face_icon2"><br>
+        <p class="text-center">みちよ</p>
+      </li>
+    </ul>
+  </div>
+  <!-- 入力フォーム -->
+  <div>名前：<span id="uname"></span></div>
+  <div>
+    <textarea id="text" cols="30" rows="4"></textarea>
+  </div>
+  <!-- 画面表示 -->
+  <div id="output" style="height:420px; overflow:auto; border:none;"></div>
+  <!-- JQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- JQuery -->
+  <!--** 以下Firebase **-->
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase.js"></script>
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+  <script>
+    // Your web app's Firebase configuration
+    
+
+
+
+
+
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const ref = firebase.database().ref(); //.ref()=ユニークキーを自動で振ってください
+    //アイコン処理
+    let d = 0;
+    let n = "";
+    const img = ["otake.jpg", "asako.jpg", "michiyo.jpg"];
+    $(".imgs").on("click", function () {
+      d = $(this).attr("data-img");
+      console.log(d);
+      if (d == 0) {
+        n = "おおたけ";
+        $(".face_icon0").css("opacity", 1);
+        $(".face_icon1").css("opacity", 0.3);
+        $(".face_icon2").css("opacity", 0.3);
+      } else if (d == 1) {
+        n = "あさこ";
+        $(".face_icon0").css("opacity", 0.3);
+        $(".face_icon1").css("opacity", 1);
+        $(".face_icon2").css("opacity", 0.3);
+      } else {
+        n = "みちよ";
+        $(".face_icon0").css("opacity", 0.3);
+        $(".face_icon1").css("opacity", 0.3);
+        $(".face_icon2").css("opacity", 1);
+      }
+      console.log(n);
+      $("#uname").html(n);
+    });
+    //関数定義
+    function send() {
+      //曜日配列
+      let eMonth = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      let week = ["日", "月", "火", "水", "木", "金", "土"];
+      //日時取得
+      let now = new Date();            //日付取得準備（必須）！！
+      let year = now.getFullYear();    //年
+      let month = now.getMonth() + 1;  //月+１を足す
+      let date = now.getDate();        //日
+      let day = now.getDay();          //曜日（数値）
+      let h = now.getHours();          //時
+      let m = now.getMinutes();        //分
+      let s = now.getSeconds();        //秒
+      //日時表示文字列の作成
+      let str = year + "-" + month + "-" + date + "(" + week[day] + ") " + h + ":" + m + ":" + s;
+      // Firebaseにデータ送信準備
+      const uname = n;
+      const text = $("#text").val();
+      const msg = {
+        uname: uname,
+        text: text,
+        now: str,
+        icon: d
+      }
+      // データ送信！
+      ref.push(msg); //set=決まった名前、push=ユニーク
+      $("#text").val("");
+      //ページ下部にスクロールするように宣言
+      const psconsole = $('#output');
+      psconsole.scrollTop(
+        psconsole[0].scrollHeight - psconsole.height()
+      )
+    }
+    //受信処理
+    ref.on("child_added", function (data) {
+      const v = data.val(); //送信されたオブジェクトを取得
+      const k = data.key; //ユニークキーの取得
+      console.log([v.icon]);
+      let h = "";
+      if ([v.icon] == 0) {
+        h = '<div class="balloon"><div class="faceicon"><img src="imgs/' + img[v.icon] + '"><p>' + v.uname + '</p></div><p class="says otake" style="background:#b0e0e6">' + v.text + '<br>' + v.now + '</p></div>';
+      } else if ([v.icon] == 1) {
+        h = '<div class="balloon"><div class="faceicon"><img src="imgs/' + img[v.icon] + '"><p>' + v.uname + '</p></div><p class="says asako" style="background:#eee8aa">' + v.text + '<br>' + v.now + '</p></div>';
+      } else {
+        h = '<div class="balloon"><div class="faceicon"><img src="imgs/' + img[v.icon] + '"><p>' + v.uname + '</p></div><p class="says michiyo" style="background:#e9967a">' + v.text + '<br>' + v.now + '</p></div>';
+      }
+      console.log(h);
+      $("#output").append(h);
+    });
+    //イベント情報取得
+    $("#text").on("keydown", function (e) {
+      if (e.keyCode == 13) {
+        send();
+      }
+    });
+  </script>
+</body>
+
+</html>

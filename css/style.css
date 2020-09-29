@@ -1,0 +1,113 @@
+@charset "utf-8";
+html {
+  font-size: 62.5%;
+}
+
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  color: #333333;
+  font-family: "Open Sans", "ヒラギノ角ゴ ProN W3", Hiragino Kaku Gothic ProN, "メイリオ", Meiryo, sans-serif;
+  font-size: 1.6rem;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.header {
+  background-color: navy;
+  height: 70px;
+}
+
+.title {
+  font-size: 3rem;
+  line-height: 70px;
+  color: #ffff;
+}
+
+.icons_wrapper {
+  width: 420px;
+  margin: auto;
+}
+
+.icons {
+  display: flex;
+}
+
+.face_icon0,
+.face_icon1,
+.face_icon2 {
+  margin: 20px 20px 0 20px;
+}
+
+/*吹き出し*/
+
+.balloon {
+  margin: 20px 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /*縦位置を上揃え*/
+}
+
+.faceicon img {
+  width: 50px;
+  /*吹き出し横のアイコンのサイズ*/
+  height: auto;
+}
+
+.balloon .faceicon {
+  margin-right: 25px;
+}
+
+.says {
+  max-width: 500px;
+  /*吹き出しの最大幅*/
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  padding: 17px 13px 15px 18px;
+  border-radius: 12px;
+  background: #99dddd;
+  box-sizing: border-box;
+  margin: 0 !important;
+  line-height: 1.5;
+}
+
+.says p {
+  margin: 8px 0 0 !important;
+}
+
+.says p:first-child {
+  margin-top: 0 !important;
+}
+
+.otake::after {
+  content: "";
+  position: absolute;
+  border: 10px solid transparent;
+  left: -26px;
+  border-right: 22px solid #b0e0e6;
+}
+
+.asako::after {
+  content: "";
+  position: absolute;
+  border: 10px solid transparent;
+  left: -26px;
+  border-right: 22px solid #eee8aa;
+}
+
+.michiyo::after {
+  content: "";
+  position: absolute;
+  border: 10px solid transparent;
+  left: -26px;
+  border-right: 22px solid #e9967a;
+}
